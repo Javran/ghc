@@ -83,6 +83,7 @@ import Data.Either      ( partitionEithers )
 import Data.List        ( find, sortBy )
 import Control.Arrow    ( first )
 import Data.Function
+import GHC.Types.FieldLabel
 
 {-
 *********************************************************
@@ -137,7 +138,6 @@ This behavior might change in the future.  Consider this
 alternate module B:
 
     module B where
-        {-# DEPRECATED T, f "Don't use" #-}
         data T = T
         f T = T
 
@@ -618,17 +618,17 @@ lookupSubBndrOcc_helper must_have_parent warn_if_deprec parent rdr_name
         checkFld g@GRE{gre_name, gre_par} = do
           addUsedGRE warn_if_deprec g
           return $ case gre_par of
-            FldParent _ mfs ->
-              FoundFL  (fldParentToFieldLabel gre_name mfs)
+            FldParent _ has_sel mfs ->
+              FoundFL  (fldParentToFieldLabel gre_name has_sel mfs)
             _ -> FoundName gre_par gre_name
 
-        fldParentToFieldLabel :: Name -> Maybe FastString -> FieldLabel
-        fldParentToFieldLabel name mfs =
+        fldParentToFieldLabel :: Name -> Maybe FastString -> FieldSelectors -> FieldLabel
+        fldParentToFieldLabel name mfs has_sel =
           case mfs of
             Nothing ->
               let fs = occNameFS (nameOccName name)
-              in FieldLabel fs False name
-            Just fs -> FieldLabel fs True name
+              in FieldLabel fs NoDuplicateRecordFields  has_sel name
+            Just fs -> FieldLabel fs DuplicateRecordFields  has_sel name
 
         -- Called when we find no matching GREs after disambiguation but
         -- there are three situations where this happens.
