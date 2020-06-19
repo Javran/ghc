@@ -830,7 +830,7 @@ newRecordSelector overload_ok (dc:_) (L loc (FieldOcc _ (L _ fld)))
        ; return $ qualFieldLbl { flSelector = selName } }
   where
     fieldOccName = occNameFS $ rdrNameOcc fld
-    qualFieldLbl = mkFieldLabelOccs fieldOccName (nameOccName dc) overload_ok
+    qualFieldLbl = mkFieldLabelOccs fieldOccName (nameOccName dc) (if overload_ok then DuplicateRecordFields else NoDuplicateRecordFields)
     field | isExact fld = fld
               -- use an Exact RdrName as is to preserve the bindings
               -- of an already renamer-resolved field and its use
@@ -1614,7 +1614,7 @@ getMinimalImports = mapM mk_minimal
               = all (`elem` ns) avail_occs
                     && all (`elem` fld_lbls) (map flLabel avail_flds)
 
-          all_non_overloaded = all (not . flIsOverloaded)
+          all_non_overloaded = all ((== NoDuplicateRecordFields) . flIsOverloaded)
 
 printMinimalImports :: [ImportDeclUsage] -> RnM ()
 -- See Note [Printing minimal imports]

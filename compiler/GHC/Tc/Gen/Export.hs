@@ -43,6 +43,7 @@ import GHC.Driver.Session
 import GHC.Rename.Doc         ( rnHsDoc )
 import GHC.Parser.PostProcess ( setRdrNameSpace )
 import Data.Either            ( partitionEithers )
+import GHC.Types.FieldLabel
 
 {-
 ************************************************************************
@@ -424,8 +425,8 @@ classifyGREs = partitionEithers . map classifyGRE
 
 classifyGRE :: GlobalRdrElt -> Either Name FieldLabel
 classifyGRE gre = case gre_par gre of
-  FldParent _ Nothing -> Right (FieldLabel (occNameFS (nameOccName n)) False n)
-  FldParent _ (Just lbl) -> Right (FieldLabel lbl True n)
+  FldParent _ Nothing -> Right (FieldLabel (occNameFS (nameOccName n)) NoDuplicateRecordFields n)
+  FldParent _ (Just lbl) -> Right (FieldLabel lbl DuplicateRecordFields n)
   _                      -> Left  n
   where
     n = gre_name gre

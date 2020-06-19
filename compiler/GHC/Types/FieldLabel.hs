@@ -67,6 +67,7 @@ module GHC.Types.FieldLabel
    , FieldLabelEnv
    , FieldLbl(..)
    , FieldLabel
+   , DuplicateRecordFields(..)
    , mkFieldLabelOccs
    )
 where
@@ -90,13 +91,29 @@ type FieldLabelString = FastString
 -- | A map from labels to all the auxiliary information
 type FieldLabelEnv = DFastStringEnv FieldLabel
 
+data DuplicateRecordFields = DuplicateRecordFields | NoDuplicateRecordFields deriving (Show, Eq, Typeable, Data)
+
+instance Binary DuplicateRecordFields where
+    put_ bh f =
+      case f of
+        DuplicateRecordFields -> put_ bh True
+        NoDuplicateRecordFields -> put_ bh False
+    get bh = do
+      got <- get bh
+      case got of
+        True -> pure $ DuplicateRecordFields
+        False -> pure $ NoDuplicateRecordFields
+
+instance Outputable DuplicateRecordFields where
+    ppr DuplicateRecordFields = text "+dup"
+    ppr NoDuplicateRecordFields = text "-dup"
 
 type FieldLabel = FieldLbl Name
 
 -- | Fields in an algebraic record type
 data FieldLbl a = FieldLabel {
       flLabel        :: FieldLabelString, -- ^ User-visible label of the field
-      flIsOverloaded :: Bool,             -- ^ Was DuplicateRecordFields on
+      flIsOverloaded :: DuplicateRecordFields,             -- ^ Was DuplicateRecordFields on
                                           --   in the defining module for this datatype?
       flSelector     :: a                 -- ^ Record selector function
     }
@@ -122,11 +139,11 @@ instance Binary a => Binary (FieldLbl a) where
 -- and the name of the first data constructor of the type, to support
 -- duplicate record field names.
 -- See Note [Why selector names include data constructors].
-mkFieldLabelOccs :: FieldLabelString -> OccName -> Bool -> FieldLbl OccName
+mkFieldLabelOccs :: FieldLabelString -> OccName -> DuplicateRecordFields -> FieldLbl OccName
 mkFieldLabelOccs lbl dc is_overloaded
   = FieldLabel { flLabel = lbl, flIsOverloaded = is_overloaded
                , flSelector = sel_occ }
   where
     str     = ":" ++ unpackFS lbl ++ ":" ++ occNameString dc
-    sel_occ | is_overloaded = mkRecFldSelOcc str
+    sel_occ | is_overloaded == DuplicateRecordFields = mkRecFldSelOcc str
             | otherwise     = mkVarOccFS lbl

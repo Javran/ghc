@@ -644,7 +644,7 @@ gresFromAvail prov_fn avail
           Just is -> GRE { gre_name = n, gre_par = FldParent (availName avail) mb_lbl
                          , gre_lcl = False, gre_imp = [is] }
       where
-        mb_lbl | is_overloaded = Just lbl
+        mb_lbl | is_overloaded == DuplicateRecordFields = Just lbl
                | otherwise     = Nothing
 
 
@@ -746,10 +746,10 @@ mkFieldLabel :: Name -> Maybe FastString -> FieldLabel
 mkFieldLabel me mb_lbl =
           case mb_lbl of
                  Nothing  -> FieldLabel { flLabel = occNameFS (nameOccName me)
-                                        , flIsOverloaded = False
+                                        , flIsOverloaded = NoDuplicateRecordFields
                                         , flSelector = me }
                  Just lbl -> FieldLabel { flLabel = lbl
-                                        , flIsOverloaded = True
+                                        , flIsOverloaded = DuplicateRecordFields
                                         , flSelector = me }
 
 emptyGlobalRdrEnv :: GlobalRdrEnv

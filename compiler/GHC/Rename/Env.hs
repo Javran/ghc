@@ -83,6 +83,7 @@ import Data.Either      ( partitionEithers )
 import Data.List        ( find, sortBy )
 import Control.Arrow    ( first )
 import Data.Function
+import GHC.Types.FieldLabel
 
 {-
 *********************************************************
@@ -627,8 +628,8 @@ lookupSubBndrOcc_helper must_have_parent warn_if_deprec parent rdr_name
           case mfs of
             Nothing ->
               let fs = occNameFS (nameOccName name)
-              in FieldLabel fs False name
-            Just fs -> FieldLabel fs True name
+              in FieldLabel fs NoDuplicateRecordFields name
+            Just fs -> FieldLabel fs DuplicateRecordFields name
 
         -- Called when we find no matching GREs after disambiguation but
         -- there are three situations where this happens.

@@ -141,6 +141,7 @@ import qualified Data.Map as Map
 import Data.Typeable ( typeOf, Typeable, TypeRep, typeRep )
 import Data.Data (Data)
 import Data.Proxy    ( Proxy (..) )
+import GHC.Types.FieldLabel
 
 {-
 ************************************************************************
@@ -2266,7 +2267,7 @@ reifyName thing
 -- See Note [Reifying field labels]
 reifyFieldLabel :: FieldLabel -> TH.Name
 reifyFieldLabel fl
-  | flIsOverloaded fl
+  | flIsOverloaded fl == DuplicateRecordFields
               = TH.Name (TH.mkOccName occ_str) (TH.NameQ (TH.mkModName mod_str))
   | otherwise = TH.mkNameG_v pkg_str mod_str occ_str
   where
