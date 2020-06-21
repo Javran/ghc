@@ -747,9 +747,11 @@ mkFieldLabel me mb_lbl =
           case mb_lbl of
                  Nothing  -> FieldLabel { flLabel = occNameFS (nameOccName me)
                                         , flIsOverloaded = NoDuplicateRecordFields
+                                        , flHasFieldSelector = FieldSelectors
                                         , flSelector = me }
                  Just lbl -> FieldLabel { flLabel = lbl
                                         , flIsOverloaded = DuplicateRecordFields
+                                        , flHasFieldSelector = FieldSelectors
                                         , flSelector = me }
 
 emptyGlobalRdrEnv :: GlobalRdrEnv

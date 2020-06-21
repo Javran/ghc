@@ -628,8 +628,11 @@ lookupSubBndrOcc_helper must_have_parent warn_if_deprec parent rdr_name
           case mfs of
             Nothing ->
               let fs = occNameFS (nameOccName name)
-              in FieldLabel fs NoDuplicateRecordFields name
-            Just fs -> FieldLabel fs DuplicateRecordFields name
+              -- +sel by default for now.
+              in FieldLabel fs NoDuplicateRecordFields FieldSelectors name
+            Just fs ->
+              -- +sel by default for now.
+              FieldLabel fs DuplicateRecordFields FieldSelectors name
 
         -- Called when we find no matching GREs after disambiguation but
         -- there are three situations where this happens.

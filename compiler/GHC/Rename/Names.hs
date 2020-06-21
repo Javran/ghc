@@ -830,7 +830,12 @@ newRecordSelector overload_ok (dc:_) (L loc (FieldOcc _ (L _ fld)))
        ; return $ qualFieldLbl { flSelector = selName } }
   where
     fieldOccName = occNameFS $ rdrNameOcc fld
-    qualFieldLbl = mkFieldLabelOccs fieldOccName (nameOccName dc) (if overload_ok then DuplicateRecordFields else NoDuplicateRecordFields)
+    qualFieldLbl =
+        mkFieldLabelOccs
+            fieldOccName
+            (nameOccName dc)
+            (if overload_ok then DuplicateRecordFields else NoDuplicateRecordFields)
+            FieldSelectors
     field | isExact fld = fld
               -- use an Exact RdrName as is to preserve the bindings
               -- of an already renamer-resolved field and its use

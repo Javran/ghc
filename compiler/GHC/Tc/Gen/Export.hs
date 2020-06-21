@@ -425,8 +425,8 @@ classifyGREs = partitionEithers . map classifyGRE
 
 classifyGRE :: GlobalRdrElt -> Either Name FieldLabel
 classifyGRE gre = case gre_par gre of
-  FldParent _ Nothing -> Right (FieldLabel (occNameFS (nameOccName n)) NoDuplicateRecordFields n)
-  FldParent _ (Just lbl) -> Right (FieldLabel lbl DuplicateRecordFields n)
+  FldParent _ Nothing -> Right (FieldLabel (occNameFS (nameOccName n)) NoDuplicateRecordFields FieldSelectors n)
+  FldParent _ (Just lbl) -> Right (FieldLabel lbl DuplicateRecordFields FieldSelectors n)
   _                      -> Left  n
   where
     n = gre_name gre

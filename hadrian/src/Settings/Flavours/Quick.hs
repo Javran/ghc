@@ -8,7 +8,7 @@ import Settings.Flavours.Common
 
 -- Please update doc/flavours.md when changing this file.
 quickFlavour :: Flavour
-quickFlavour = defaultFlavour
+quickFlavour = werror $ defaultFlavour
     { name        = "quick"
     , args        = defaultBuilderArgs <> quickArgs <> defaultPackageArgs
     , libraryWays = mconcat
