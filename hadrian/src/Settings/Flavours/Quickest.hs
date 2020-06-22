@@ -7,7 +7,7 @@ import Settings.Flavours.Common
 
 -- Please update doc/flavours.md when changing this file.
 quickestFlavour :: Flavour
-quickestFlavour = defaultFlavour
+quickestFlavour = werror $ defaultFlavour
     { name        = "quickest"
     , args        = defaultBuilderArgs <> quickestArgs <> defaultPackageArgs
     , libraryWays = pure [vanilla]

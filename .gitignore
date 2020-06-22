@@ -232,3 +232,4 @@ ghc.nix/
 
 # Tooling - vscode
 .vscode
+stack.yaml.lock

@@ -7,7 +7,7 @@ import {-# SOURCE #-} Settings.Default
 
 -- Please update doc/flavours.md when changing this file.
 developmentFlavour :: Stage -> Flavour
-developmentFlavour ghcStage = defaultFlavour
+developmentFlavour ghcStage = werror $ defaultFlavour
     { name = "devel" ++ show (fromEnum ghcStage)
     , args = defaultBuilderArgs <> developmentArgs ghcStage <> defaultPackageArgs
     , libraryWays = pure [vanilla]
