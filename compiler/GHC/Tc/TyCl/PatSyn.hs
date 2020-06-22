@@ -63,6 +63,7 @@ import GHC.Utils.Error
 import Data.Maybe( mapMaybe )
 import Control.Monad ( zipWithM )
 import Data.List( partition )
+import qualified GHC.LanguageExtensions as LangExt
 
 #include "HsVersions.h"
 
@@ -645,10 +646,18 @@ tc_patsyn_finish lname dir is_infix lpat'
                                          ex_tvs   prov_theta
                                          arg_tys pat_ty
 
+       ; dup_rcd_enabled <- xoptM LangExt.DuplicateRecordFields
+       ; fld_sel_enabled <- xoptM LangExt.FieldSelectors
          -- TODO: Make this have the proper information
        ; let mkFieldLabel name = FieldLabel { flLabel = occNameFS (nameOccName name)
-                                            , flIsOverloaded = NoDuplicateRecordFields
-                                            , flHasFieldSelector = FieldSelectors
+                                            , flIsOverloaded =
+                                                if dup_rcd_enabled
+                                                  then DuplicateRecordFields
+                                                  else NoDuplicateRecordFields
+                                            , flHasFieldSelector =
+                                                if fld_sel_enabled
+                                                  then FieldSelectors
+                                                  else NoFieldSelectors
                                             , flSelector = name }
              field_labels' = map mkFieldLabel field_labels
 
