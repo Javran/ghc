@@ -619,20 +619,18 @@ lookupSubBndrOcc_helper must_have_parent warn_if_deprec parent rdr_name
         checkFld g@GRE{gre_name, gre_par} = do
           addUsedGRE warn_if_deprec g
           return $ case gre_par of
-            FldParent _ mfs _ ->
-              FoundFL  (fldParentToFieldLabel gre_name mfs)
+            FldParent _ mfs has_sel ->
+              FoundFL  (fldParentToFieldLabel gre_name mfs has_sel)
             _ -> FoundName gre_par gre_name
 
-        fldParentToFieldLabel :: Name -> Maybe FastString -> FieldLabel
-        fldParentToFieldLabel name mfs =
+        fldParentToFieldLabel :: Name -> Maybe FastString -> FieldSelectors -> FieldLabel
+        fldParentToFieldLabel name mfs has_sel =
           case mfs of
             Nothing ->
               let fs = occNameFS (nameOccName name)
-              -- +sel by default for now.
-              in FieldLabel fs NoDuplicateRecordFields FieldSelectors name
+              in FieldLabel fs NoDuplicateRecordFields has_sel name
             Just fs ->
-              -- +sel by default for now.
-              FieldLabel fs DuplicateRecordFields FieldSelectors name
+              FieldLabel fs DuplicateRecordFields has_sel name
 
         -- Called when we find no matching GREs after disambiguation but
         -- there are three situations where this happens.

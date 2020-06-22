@@ -2265,11 +2265,12 @@ extendPatSynEnv val_decls local_fix_env thing = do {
                                        , psb_args = RecCon as }))) <- bind
       = do
           bnd_name <- newTopSrcBinder (L bind_loc n)
+          has_sel <- xoptM LangExt.FieldSelectors
           let rnames = map recordPatSynSelectorId as
               mkFieldOcc :: Located RdrName -> LFieldOcc GhcPs
               mkFieldOcc (L l name) = L l (FieldOcc noExtField (L l name))
               field_occs =  map mkFieldOcc rnames
-          flds     <- mapM (newRecordSelector False [bnd_name]) field_occs
+          flds     <- mapM (newRecordSelector False has_sel [bnd_name]) field_occs
           return ((bnd_name, flds): names)
       | L bind_loc (PatSynBind _ (PSB { psb_id = L _ n})) <- bind
       = do
