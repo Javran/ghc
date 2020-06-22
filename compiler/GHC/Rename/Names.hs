@@ -1185,7 +1185,7 @@ mkChildEnv :: [GlobalRdrElt] -> NameEnv [GlobalRdrElt]
 mkChildEnv gres = foldr add emptyNameEnv gres
   where
     add gre env = case gre_par gre of
-        FldParent p _  -> extendNameEnv_Acc (:) singleton env p gre
+        FldParent p _ _ -> extendNameEnv_Acc (:) singleton env p gre
         ParentIs  p    -> extendNameEnv_Acc (:) singleton env p gre
         NoParent       -> env
 

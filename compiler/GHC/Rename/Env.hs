@@ -619,7 +619,7 @@ lookupSubBndrOcc_helper must_have_parent warn_if_deprec parent rdr_name
         checkFld g@GRE{gre_name, gre_par} = do
           addUsedGRE warn_if_deprec g
           return $ case gre_par of
-            FldParent _ mfs ->
+            FldParent _ mfs _ ->
               FoundFL  (fldParentToFieldLabel gre_name mfs)
             _ -> FoundName gre_par gre_name
 
